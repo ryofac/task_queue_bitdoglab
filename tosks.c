@@ -51,6 +51,8 @@ void setup(void)
     init_leds();
     init_buttons();
     clear_display();
+
+    display_text("Aperte A para acender o led!");
 }
 
 void update_button_state(uint led_number, bool is_pressed)
@@ -89,18 +91,6 @@ void vPressRegisterTask(void *task_params)
     }
 }
 
-void vDisplayClickCountTask(void *task_params)
-{
-    for (;;)
-    {
-        clear_display();
-        char buffer[32];
-        snprintf(buffer, sizeof(buffer), "Numero de cliques: %d", number_pressed);
-        display_text(buffer);            // Exibe o número de cliques
-        vTaskDelay(pdMS_TO_TICKS(1000)); // Aguarda 1 segundo
-    }
-}
-
 int main()
 {
     setup();
@@ -133,7 +123,6 @@ int main()
     // Criação das tarefas
     xTaskCreate(vPressRegisterTask, "Register ButtonPress", configMINIMAL_STACK_SIZE, NULL, 1, NULL);
     xTaskCreate(vButtonStateTask, "Button State Task", 128, (void *)task_prm_01, 1, NULL);
-    xTaskCreate(vDisplayClickCountTask, "Display Click Count", 128, NULL, 1, NULL);
 
     // Inicia o escalonador
     vTaskStartScheduler();
